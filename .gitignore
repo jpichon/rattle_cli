@@ -1,0 +1,6 @@
+*~
+*.pyc
+*.pyo
+
+secrets.py
+rattle.log

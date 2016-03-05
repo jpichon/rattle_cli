@@ -1,0 +1,2 @@
+rauth		# Tested with 0.7.2
+xmltodict 	# Tested with 0.10.1

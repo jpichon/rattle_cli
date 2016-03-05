@@ -1,0 +1,26 @@
+Installing requirements
+-----------------------
+
+Install the requirements:
+
+    $ pip install -r requirements.txt
+
+Set up the secrets.py file with the following variables:
+
+    api_key = "Reading"
+    api_secret = "All"
+    access_token = "The"
+    access_token_secret = "Things"
+
+You can get an API key and secret by logging into your Goodreads
+account and browing to https://www.goodreads.com/api/keys (you can put
+in bogus information, as long as you don't make lots and lots of call
+the Goodreads folks don't mind). For the access token, er, I'll add
+the stuff to get it later.
+
+Using
+-----
+
+Tested with Python 3.3.
+
+   $ python rattle-cli.py
