@@ -21,14 +21,16 @@ def reopen_session(api_key, api_secret, access_token, access_token_secret):
 
 def main():
     log_format = '%(asctime)s - %(levelname)s:%(name)s:%(message)s'
-    logging.basicConfig(filename='rattle.log', level=logging.INFO,
+    logging.basicConfig(filename='rattle.log',
+                        filemode='w',
+                        level=logging.INFO,
                         format=log_format)
 
     session = reopen_session(api_key, api_secret,
                              access_token, access_token_secret)
 
     goodreads = Goodreads(session)
-    reviews = goodreads.get_reviews()
+    books = goodreads.get_books()
 
 
 if __name__ == "__main__":
