@@ -3,6 +3,7 @@ import logging
 from rauth.service import OAuth1Service, OAuth1Session
 import xmltodict
 
+from goodreads import Goodreads
 try:
     from secrets import api_key, api_secret, \
         access_token, access_token_secret
@@ -18,43 +19,16 @@ def reopen_session(api_key, api_secret, access_token, access_token_secret):
                            )
     return session
 
-def get_user(session):
-    url = "https://www.goodreads.com/api/auth_user"
-    logging.info("Getting user info at %s" % url)
-
-    try:
-        response = session.get(url)
-        return xmltodict.parse(response.content)['GoodreadsResponse']['user']
-    except Exception:
-        msg = "Couldn't get the user info (%s). Status code: %s"
-        logging.exception(msg, url, response.status_code)
-        exit(msg % (url, response.status_code))
-
-def get_user_reviews(session, uid):
-    data = {'id': uid,
-            'v': '2',
-            'shelf': 'read',
-            'per_page': 1,
-            'sort': 'date_read'}
-
-    url = 'https://www.goodreads.com/review/list/%s.xml' % uid
-    response = session.post(url, data)
-
-    logging.info("Getting user reviews: %s", response.status_code)
-
 def main():
-    logging.basicConfig(filename='rattle.log', level=logging.INFO)
+    log_format = '%(asctime)s - %(levelname)s:%(name)s:%(message)s'
+    logging.basicConfig(filename='rattle.log', level=logging.INFO,
+                        format=log_format)
 
     session = reopen_session(api_key, api_secret,
                              access_token, access_token_secret)
-    user = get_user(session)
 
-    try:
-        user_id = user['@id']
-    except KeyError:
-        exit("Couldn't get the user ID from the OAuth session.")
-
-    get_user_reviews(session, user_id)
+    goodreads = Goodreads(session)
+    reviews = goodreads.get_reviews()
 
 
 if __name__ == "__main__":
