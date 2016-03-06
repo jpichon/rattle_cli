@@ -3,6 +3,7 @@ import logging
 
 import xmltodict
 
+
 class Goodreads():
 
     main_tag = 'GoodreadsResponse'
@@ -98,6 +99,8 @@ class Book():
         self.date_read = date_read
         if shelves is None:
             self.shelves = []
+        else:
+            self.shelves = shelves
 
     def __repr__(self):
         return "Book(%s, by %s)" % (self.title, self.author)
