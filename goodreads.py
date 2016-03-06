@@ -1,3 +1,4 @@
+from datetime import datetime
 import logging
 
 import xmltodict
@@ -5,6 +6,7 @@ import xmltodict
 class Goodreads():
 
     main_tag = 'GoodreadsResponse'
+    date_format = '%a %b %d %H:%M:%S %z %Y'
 
     def __init__(self, session):
         self.logger = logging.getLogger('goodreads')
@@ -61,7 +63,13 @@ class Goodreads():
 
             for review in reviews['review']:
                 title = review['book']['title']
-                date_read = review['read_at']
+                try:
+                    date_read = datetime.strptime(review['read_at'],
+                                                  self.date_format)
+                except:
+                    date_read = review['read_at']
+                    logging.debug("Failed to parse date %s for book %s",
+                                  date_read, title)
 
                 if type(review['book']['authors']['author']) == list:
                     authors = [a['name']
