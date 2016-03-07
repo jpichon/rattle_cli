@@ -1,7 +1,6 @@
 import logging
 
-from rauth.service import OAuth1Service, OAuth1Session
-import xmltodict
+from rauth.service import OAuth1Session
 
 from bookarranger import BookArranger
 from goodreads import Goodreads
@@ -13,11 +12,10 @@ except:
 
 
 def reopen_session(api_key, api_secret, access_token, access_token_secret):
-    session = OAuth1Session(consumer_key = api_key,
-                            consumer_secret = api_secret,
-                            access_token = access_token,
-                            access_token_secret = access_token_secret,
-                           )
+    session = OAuth1Session(consumer_key=api_key,
+                            consumer_secret=api_secret,
+                            access_token=access_token,
+                            access_token_secret=access_token_secret)
     return session
 
 
