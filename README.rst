@@ -7,13 +7,16 @@ you read in multiple languages, maybe you'd like to make sure you're
 reading more or less equally in each language so that your skills in
 one don't atrophy too much.
 
+Usage
+-----
+
 When running the script, you'll be asked to authorise the application
-to collect your review data, then your statistics for the current year
-(or whatever year is specified) will be displayed. As an example:
+to collect your review data, then your statistics for the specified
+year will be displayed. As an example:
 
 ::
 
-    $ python rattle-cli.py
+    $ python rattle-cli.py --lang en fr ja --year 2016
     Books read based on Goodreads reviews
     en: 3
     fr: 1
@@ -23,9 +26,8 @@ You can also see the detailed version.
 
 ::
 
-    $ python rattle-cli.py
+    $ python rattle-cli.py --lang en fr ja --year 2016 --details
     Books read based on Goodreads reviews
-
     en: 3
     The Hero of Ages (Mistborn, #3), by Brandon Sanderson
     The Well of Ascension (Mistborn, #2), by Brandon Sanderson
@@ -37,6 +39,20 @@ You can also see the detailed version.
     ja: 2
     探偵ガリレオ [Tantei Garireo] (ガリレオ, #1), by Keigo Higashino
     陽気なギャングが地球を回す, by Kotaro Isaka
+
+Let's say that like me you don't actually have a special shelf for
+books in English, because that's the default language you read in. In
+other words: if a book isn't shelved on either 'fr' or 'ja' then it's
+fair to assume it's in English.
+
+::
+
+    $ python rattle-cli.py --lang fr ja --other --year 2016
+    Books read based on Goodreads reviews
+    default: 3
+    fr: 1
+    ja: 2
+
 
 Installing requirements
 -----------------------
@@ -63,11 +79,34 @@ in bogus information, as long as you don't make lots and lots of call
 the Goodreads folks don't mind). For the access token, er, I'll add
 the stuff to get it later.
 
-Using
------
+Versions
+--------
 
 Tested with Python 3.3.
 
 ::
 
-    $ python rattle-cli.py
+    $ python rattle-cli.py --help
+
+Known issues
+------------
+
+If one retrieves the individual book details for a specific id, there
+is a language_code attribute present. I used shelves instead of this
+for a number of reasons:
+
+  - It matches my own shelving system.
+
+  - Not every book on Goodreads is associated with a language code,
+    particularly older/less popular books. Sure, you could update
+    Goodreads as you find issues but only Librarians can do that, so
+    you'd need to apply and be approved for the role first, which
+    isn't guaranteed.
+
+  - The current system uses the user reviews list API, which takes
+    only a few API calls to get through a user's entire list of
+    books. Getting each book's details would take much longer, and in
+    that case it'd probably be smarter to store the data in a database
+    and make sure to only get the updated stuff (new books, modified
+    read dates) afterward instead. Maybe someday. There are other cool
+    stats the data could be used for.
