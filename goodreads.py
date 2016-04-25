@@ -58,8 +58,16 @@ class Goodreads():
             reviews = self.retrieve_reviews(page)
             end = int(reviews['@end'])
             total = int(reviews['@total'])
+            self.logger.debug("Parsing page %s (until review #%s, total %s)",
+                              page, end, total)
 
-            for review in reviews['review']:
+            # Make sure the reviews are iterable, even if only one is returned
+            if type(reviews['review']) == list:
+                reviews = reviews['review']
+            else:
+                reviews = [reviews['review']]
+
+            for review in reviews:
                 self.logger.debug("Parsing review %s", review['id'])
                 title = review['book']['title']
                 date_read = self.parse_date_read(review)

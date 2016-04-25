@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from datetime import datetime, timedelta, timezone
 
 
@@ -12,7 +14,7 @@ class GoodreadsXMLFactory():
   <reviews start="{review_start_cnt}" end="{review_end_cnt}" total="{review_total_cnt}">
   {reviews}
 </reviews>
-</GoodreadsResponse>"""
+</GoodreadsResponse>"""  # noqa
 
     review_tag = """
 <review>
@@ -42,8 +44,12 @@ class GoodreadsXMLFactory():
 
     def create_full_xml_response(self, reviews=1, authors=1, d=None, shelves=1,
                                  start_cnt=1, end_cnt=None):
+        total_cnt = reviews
+
         if end_cnt is None:
             end_cnt = reviews
+        else:
+            reviews = end_cnt - start_cnt + 1
 
         response = ""
         for n in range(0, reviews):
@@ -52,7 +58,7 @@ class GoodreadsXMLFactory():
         details = {'reviews': response,
                    'review_end_cnt': end_cnt,
                    'review_start_cnt': start_cnt,
-                   'review_total_cnt': reviews}
+                   'review_total_cnt': total_cnt}
 
         return self.main_tag.format_map(details)
 

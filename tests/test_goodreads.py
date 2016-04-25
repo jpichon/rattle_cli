@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from collections import OrderedDict
 import datetime
 import unittest
 from unittest import mock
 
-from rattle_cli.goodreads import Goodreads
+from rattle_cli.goodreads import Book, Goodreads
+from rattle_cli.tests.xml_fixtures import GoodreadsXMLFactory
 
 
 class TestUser(unittest.TestCase):
@@ -166,3 +168,163 @@ class TestReviewParsing(unittest.TestCase):
     def test_parse_shelves_no_tag(self):
         result = self.goodreads.parse_shelves(self.review)
         self.assertEqual(result, [])
+
+
+class TestReviewRetrieval(unittest.TestCase):
+
+    book_title = "Wonderful Book Title %d"
+
+    def setUp(self):
+        session = mock.Mock()
+        self.goodreads = Goodreads(session)
+        self.xml_factory = GoodreadsXMLFactory()
+
+    def test_retrieve_reviews(self):
+        response = mock.Mock()
+        response.content = self.xml_factory.create_full_xml_response()
+        self.goodreads.session.post.return_value = response
+
+        result = self.goodreads.retrieve_reviews()
+        self.assertIsInstance(result, OrderedDict)
+        self.assertIn('review', result.keys())
+
+        review = result['review']  # Only one review, so not a list
+        self.assertIn('book', review.keys())
+        self.assertIn('shelves', review.keys())
+
+    def test_retrieve_reviews_multiple_reviews(self):
+        review_count = 10
+        xml = self.xml_factory.create_full_xml_response(reviews=review_count)
+        response = mock.Mock()
+        response.content = xml
+        self.goodreads.session.post.return_value = response
+
+        result = self.goodreads.retrieve_reviews()
+        self.assertIsInstance(result, OrderedDict)
+        self.assertIn('review', result.keys())
+
+        # When there are multiple reviews, 'review' is a list
+        self.assertIsInstance(result['review'], list)
+        self.assertEqual(len(result['review']), review_count)
+        for review in result['review']:
+            self.assertIn('book', review.keys())
+            self.assertIn('shelves', review.keys())
+
+    def test_get_books_one_book(self):
+        response = mock.Mock()
+        response.content = self.xml_factory.create_full_xml_response()
+        self.goodreads.session.post.return_value = response
+
+        result = self.goodreads.get_books()
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0].title, self.book_title % 0)
+
+    def test_get_books_multiple_books(self):
+        review_count = 10
+        xml = self.xml_factory.create_full_xml_response(reviews=review_count)
+        response = mock.Mock()
+        response.content = xml
+        self.goodreads.session.post.return_value = response
+
+        result = self.goodreads.get_books()
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), review_count)
+        for book in result:
+            self.assertIsInstance(book, Book)
+
+        self.assertEqual(result[1].title, self.book_title % 1)
+
+    def test_get_books_two_pages(self):
+        review_count = 8
+
+        def fake_post(url, data):
+            if data['page'] == 1:
+                start, end = 1, 5
+            elif data['page'] == 2:
+                start, end = 6, 8
+            else:
+                self.fail("Called with page number %d" % data['page'])
+
+            response = mock.Mock()
+            response.content = self.xml_factory.create_full_xml_response(
+                reviews=review_count,
+                start_cnt=start,
+                end_cnt=end)
+            return response
+
+        self.goodreads.session.post = fake_post
+
+        result = self.goodreads.get_books()
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), review_count)
+
+    def test_get_books_two_pages_single_review_on_page_two(self):
+        review_count = 8
+
+        def fake_post(url, data):
+            if data['page'] == 1:
+                start, end = 1, 7
+            elif data['page'] == 2:
+                start, end = 8, 8
+            else:
+                self.fail("Called with page number %d" % data['page'])
+
+            response = mock.Mock()
+            response.content = self.xml_factory.create_full_xml_response(
+                reviews=review_count,
+                start_cnt=start,
+                end_cnt=end)
+            return response
+
+        self.goodreads.session.post = fake_post
+
+        result = self.goodreads.get_books()
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), review_count)
+
+    def test_get_books_multiple_pages(self):
+        review_count = 100
+
+        def fake_post(url, data):
+            page = data['page']
+            if page <= 10:
+                start = (page-1) * 10 + 1
+                end = page * 10
+            else:
+                self.fail("Called with page number %d" % data['page'])
+
+            response = mock.Mock()
+            response.content = self.xml_factory.create_full_xml_response(
+                reviews=review_count,
+                start_cnt=start,
+                end_cnt=end)
+            return response
+
+        self.goodreads.session.post = fake_post
+
+        result = self.goodreads.get_books()
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), review_count)
+
+    def test_get_books_multiple_pages_single_review(self):
+        review_count = 12
+
+        def fake_post(url, data):
+            if data['page'] <= review_count:
+                start, end = data['page'], data['page']
+            else:
+                self.fail("Called with page number %d" % data['page'])
+
+            response = mock.Mock()
+            response.content = self.xml_factory.create_full_xml_response(
+                reviews=review_count,
+                start_cnt=start,
+                end_cnt=end)
+            return response
+
+        self.goodreads.session.post = fake_post
+
+        result = self.goodreads.get_books()
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), review_count)
