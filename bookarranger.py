@@ -3,8 +3,10 @@ class BookArranger():
     def __init__(self, books):
         self.books = books
 
-    # Can't get the language via the API so using shelf names instead of
-    # languages for now.
+    # The language code is not available on the general reviews list,
+    # and even on the book details page it is not always
+    # present. Because of this, let's use shelf names instead of
+    # language codes. This assumes only one language per book.
     def sort_by_language(self, languages=None, other=False,
                          other_label='default', year=None):
         sorted_books = {}
