@@ -91,6 +91,30 @@ class TestReviewParsing(unittest.TestCase):
         self.assertIsInstance(result, str)
         self.assertEqual(result, "")
 
-    def test_parse_date_no_date(self):
+    def test_parse_date_no_tag(self):
         result = self.goodreads.parse_date_read(self.review)
+        self.assertEqual(result, "")
+
+    def test_parse_author_single(self):
+        author = "John Doe"
+        self.review['book'] = {'authors': {'author': {'name': author}}}
+
+        result = self.goodreads.parse_author(self.review)
+        self.assertEqual(result, author)
+
+    def test_parse_author_two_authors(self):
+        self.review['book'] = {'authors': {'author': [{'name': 'John Doe'},
+                                                      {'name': 'Jane Doe'}]}}
+
+        result = self.goodreads.parse_author(self.review)
+        self.assertEqual(result, "John Doe, Jane Doe")
+
+    def test_parse_author_empty(self):
+        self.review['book'] = {'authors': {'author': ""}}
+
+        result = self.goodreads.parse_author(self.review)
+        self.assertEqual(result, "")
+
+    def test_parse_author_no_tag(self):
+        result = self.goodreads.parse_author(self.review)
         self.assertEqual(result, "")

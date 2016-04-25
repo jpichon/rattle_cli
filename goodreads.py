@@ -64,13 +64,7 @@ class Goodreads():
 
                 title = review['book']['title']
                 date_read = self.parse_date_read(review)
-
-                if type(review['book']['authors']['author']) == list:
-                    authors = [a['name']
-                               for a in review['book']['authors']['author']]
-                    author = ', '.join(authors)
-                else:
-                    author = review['book']['authors']['author']['name']
+                author = self.parse_author(review)
 
                 if type(review['shelves']['shelf']) == list:
                     shelves = [shelf['@name']
@@ -99,6 +93,20 @@ class Goodreads():
             self.logger.exception("Failed to parse date for review %s",
                                   review['id'])
         return date_read
+
+    def parse_author(self, review):
+        try:
+            if type(review['book']['authors']['author']) == list:
+                authors = [a['name']
+                           for a in review['book']['authors']['author']]
+                author = ', '.join(authors)
+            else:
+                author = review['book']['authors']['author']['name']
+        except Exception:
+            author = ""
+            self.logger.exception("Failed to parse author(s) for review %s",
+                                  review['id'])
+        return author
 
 
 class Book():
