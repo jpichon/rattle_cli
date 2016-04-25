@@ -61,16 +61,10 @@ class Goodreads():
 
             for review in reviews['review']:
                 self.logger.debug("Parsing review %s", review['id'])
-
                 title = review['book']['title']
                 date_read = self.parse_date_read(review)
                 author = self.parse_author(review)
-
-                if type(review['shelves']['shelf']) == list:
-                    shelves = [shelf['@name']
-                               for shelf in review['shelves']['shelf']]
-                else:
-                    shelves = [review['shelves']['shelf']['@name']]
+                shelves = self.parse_shelves(review)
 
                 book = Book(title, author, date_read, shelves)
                 self.books.append(book)
@@ -107,6 +101,19 @@ class Goodreads():
             self.logger.exception("Failed to parse author(s) for review %s",
                                   review['id'])
         return author
+
+    def parse_shelves(self, review):
+        try:
+            if type(review['shelves']['shelf']) == list:
+                shelves = [shelf['@name']
+                           for shelf in review['shelves']['shelf']]
+            else:
+                shelves = [review['shelves']['shelf']['@name']]
+        except Exception:
+            shelves = []
+            self.logger.exception("Failed to parse shelves for review %s",
+                                  review['id'])
+        return shelves
 
 
 class Book():

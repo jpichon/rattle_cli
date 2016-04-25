@@ -118,3 +118,31 @@ class TestReviewParsing(unittest.TestCase):
     def test_parse_author_no_tag(self):
         result = self.goodreads.parse_author(self.review)
         self.assertEqual(result, "")
+
+    def test_parse_shelves_single(self):
+        shelf = "My cool shelf that's mine"
+        self.review['shelves'] = {'shelf': {'@name': shelf}}
+
+        result = self.goodreads.parse_shelves(self.review)
+        self.assertEqual(result, [shelf])
+
+    def test_parse_shelves_two_shelves(self):
+        shelf_one = "My shelf"
+        shelf_two = "Your shelf"
+        self.review['shelves'] = {'shelf': [{'@name': shelf_one},
+                                            {'@name': shelf_two}]}
+
+        result = self.goodreads.parse_shelves(self.review)
+        self.assertIsInstance(result, list)
+        self.assertCountEqual(result, [shelf_one, shelf_two])
+
+    def test_parse_shelves_empty(self):
+        self.review['shelves'] = {'shelf': {}}
+
+        result = self.goodreads.parse_shelves(self.review)
+        self.assertIsInstance(result, list)
+        self.assertEqual(len(result), 0)
+
+    def test_parse_shelves_no_tag(self):
+        result = self.goodreads.parse_shelves(self.review)
+        self.assertEqual(result, [])
