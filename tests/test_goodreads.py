@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import datetime
 import unittest
 from unittest import mock
@@ -109,6 +112,13 @@ class TestReviewParsing(unittest.TestCase):
         result = self.goodreads.parse_author(self.review)
         self.assertEqual(result, "John Doe, Jane Doe")
 
+    def test_parse_author_utf8(self):
+        author = "村上春樹"
+        self.review['book'] = {'authors': {'author': {'name': author}}}
+
+        result = self.goodreads.parse_author(self.review)
+        self.assertEqual(result, author)
+
     def test_parse_author_empty(self):
         self.review['book'] = {'authors': {'author': ""}}
 
@@ -129,6 +139,16 @@ class TestReviewParsing(unittest.TestCase):
     def test_parse_shelves_two_shelves(self):
         shelf_one = "My shelf"
         shelf_two = "Your shelf"
+        self.review['shelves'] = {'shelf': [{'@name': shelf_one},
+                                            {'@name': shelf_two}]}
+
+        result = self.goodreads.parse_shelves(self.review)
+        self.assertIsInstance(result, list)
+        self.assertCountEqual(result, [shelf_one, shelf_two])
+
+    def test_parse_shelves_utf8(self):
+        shelf_one = "广东话"
+        shelf_two = "čeština"
         self.review['shelves'] = {'shelf': [{'@name': shelf_one},
                                             {'@name': shelf_two}]}
 
