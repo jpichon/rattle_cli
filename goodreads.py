@@ -60,14 +60,10 @@ class Goodreads():
             total = int(reviews['@total'])
 
             for review in reviews['review']:
+                self.logger.debug("Parsing review %s", review['id'])
+
                 title = review['book']['title']
-                try:
-                    date_read = datetime.strptime(review['read_at'],
-                                                  self.date_format)
-                except:
-                    date_read = review['read_at']
-                    self.logger.debug("Failed to parse date %s for book %s",
-                                      date_read, title)
+                date_read = self.parse_date_read(review)
 
                 if type(review['book']['authors']['author']) == list:
                     authors = [a['name']
@@ -86,6 +82,23 @@ class Goodreads():
                 self.books.append(book)
 
         return self.books
+
+    def parse_date_read(self, review):
+        try:
+            date_read = datetime.strptime(review['read_at'],
+                                          self.date_format)
+        except KeyError:
+            date_read = ""
+            self.logger.info("Date read is missing (review %s)", review['id'])
+        except ValueError:
+            date_read = review['read_at']
+            self.logger.debug("Failed to parse date %s (review %s)",
+                              date_read, review['id'])
+        except Exception:
+            date_read = ""
+            self.logger.exception("Failed to parse date for review %s",
+                                  review['id'])
+        return date_read
 
 
 class Book():
