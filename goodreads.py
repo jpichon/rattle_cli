@@ -16,8 +16,6 @@ class Goodreads():
         self.user_id = None
         self.books = []
 
-        self.initialise_user()
-
     def initialise_user(self):
         self.user = self.get_authenticated_user()
         try:
@@ -36,8 +34,7 @@ class Goodreads():
             return xmltodict.parse(response.content)[self.main_tag]['user']
         except Exception:
             msg = "Couldn't get the user info (%s). Status code: %s"
-            logging.exception(msg, url, response.status_code)
-            logging.debug(response.text)
+            self.logger.exception(msg, url, response.status_code)
             exit(msg % (url, response.status_code))
 
     def retrieve_reviews(self, page=1):
@@ -49,8 +46,8 @@ class Goodreads():
 
         url = 'https://www.goodreads.com/review/list/%s.xml' % self.user_id
         response = self.session.post(url, data)
-        logging.info("Getting reviews (%s, page %s): %s",
-                     url, page, response.status_code)
+        self.logger.info("Getting reviews (%s, page %s): %s",
+                         url, page, response.status_code)
         return xmltodict.parse(response.content)[self.main_tag]['reviews']
 
     def get_books(self):
@@ -69,8 +66,8 @@ class Goodreads():
                                                   self.date_format)
                 except:
                     date_read = review['read_at']
-                    logging.debug("Failed to parse date %s for book %s",
-                                  date_read, title)
+                    self.logger.debug("Failed to parse date %s for book %s",
+                                      date_read, title)
 
                 if type(review['book']['authors']['author']) == list:
                     authors = [a['name']

@@ -23,13 +23,15 @@ def main():
     log_format = '%(asctime)s - %(levelname)s:%(name)s:%(message)s'
     logging.basicConfig(filename='rattle.log',
                         filemode='w',
-                        level=logging.INFO,
+                        level=logging.WARNING,
                         format=log_format)
 
     session = reopen_session(api_key, api_secret,
                              access_token, access_token_secret)
 
     goodreads = Goodreads(session)
+    goodreads.initialise_user()
+
     books = goodreads.get_books()
     arranger = BookArranger(books)
     sorted_books = arranger.sort_by_language(['fr', 'ja'],
