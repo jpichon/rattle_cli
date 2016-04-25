@@ -3,4 +3,5 @@
 *.pyo
 
 secrets.py
+.access_token
 rattle.log

@@ -1,15 +1,61 @@
 import argparse
 import logging
+import os
 
-from rauth.service import OAuth1Session
+from rauth.service import OAuth1Service, OAuth1Session
 
 from bookarranger import BookArranger
 from goodreads import Goodreads
 try:
-    from secrets import api_key, api_secret, \
-        access_token, access_token_secret
+    from secrets import api_key, api_secret
 except:
-    exit("No API key/access tokens found.")
+    exit("No API key/secret found.")
+
+
+def get_new_session():
+    goodreads = OAuth1Service(
+        consumer_key=api_key,
+        consumer_secret=api_secret,
+        name='goodreads',
+        request_token_url='http://www.goodreads.com/oauth/request_token',
+        authorize_url='http://www.goodreads.com/oauth/authorize',
+        access_token_url='http://www.goodreads.com/oauth/access_token',
+        base_url='http://www.goodreads.com/'
+    )
+
+    req_token, req_token_secret = goodreads.get_request_token(header_auth=True)
+    authorize_url = goodreads.get_authorize_url(req_token)
+
+    print('Visit this URL in your browser: ' + authorize_url)
+    accepted = 'n'
+    while accepted.lower() != 'y':
+        accepted = input('Have you authorized me? (y/n) ')
+    session = goodreads.get_auth_session(req_token, req_token_secret)
+    access_token = session.access_token
+    access_token_secret = session.access_token_secret
+    return session, access_token, access_token_secret
+
+
+def get_session():
+    filename = '.access_token'
+    # Did we save the access tokens last time?
+    if os.path.isfile(filename):
+        with open(filename, 'r') as f:
+            access_token = f.readlines()
+        return reopen_session(api_key, api_secret,
+                              access_token[0].strip(),
+                              access_token[1].strip())
+    else:
+        # Let's get a brand new session then
+        session, access_token, access_token_secret = get_new_session()
+        try:
+            # Let's save these tokens for future convenience
+            with open(filename, 'w') as f:
+                print(access_token, file=f)
+                print(access_token_secret, file=f)
+        except:
+            logging.exception("Couldn't save the token")
+        return session
 
 
 def reopen_session(api_key, api_secret, access_token, access_token_secret):
@@ -22,8 +68,7 @@ def reopen_session(api_key, api_secret, access_token, access_token_secret):
 
 def retrieve_and_sort_books(languages=None, other=False, other_label='default',
                             year=None, details=False):
-    session = reopen_session(api_key, api_secret,
-                             access_token, access_token_secret)
+    session = get_session()
     goodreads = Goodreads(session)
     goodreads.initialise_user()
 

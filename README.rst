@@ -54,8 +54,8 @@ fair to assume it's in English.
     ja: 2
 
 
-Installing requirements
------------------------
+Getting started
+---------------
 
 Install the requirements:
 
@@ -64,20 +64,45 @@ Install the requirements:
     $ pip install -r requirements.txt
 
 
-Set up the secrets.py file with the following variables:
+Create a ``secrets.py`` file (at the same level as ``rattle_cli.py``)
+set with the following variables:
 
 ::
 
     api_key = "Reading"
-    api_secret = "All"
-    access_token = "The"
-    access_token_secret = "Things"
+    api_secret = "All The Things"
 
 You can get an API key and secret by logging into your Goodreads
 account and browing to https://www.goodreads.com/api/keys (you can put
 in bogus information, as long as you don't make lots and lots of call
-the Goodreads folks don't mind). For the access token, er, I'll add
-the stuff to get it later.
+the Goodreads folks don't mind).
+
+The first time you use the app, you'll have to authorise it:
+
+::
+
+  $ python rattle_cli.py --languages en de --year 2016
+  Visit this URL in your browser: http://www.goodreads.com/oauth/authorize?oauth_token=abcdefz
+  Have you authorized me? (y/n)
+
+Open the URL in the browser. Once you've allowed the app, you can
+return to the CLI and type in ``y``. If it worked, you'll have to wait a
+little while your reviews are being fetched then the stats will be
+displayed.
+
+::
+
+  $ python rattle_cli.py --languages en de --year 2016
+  Visit this URL in your browser: http://www.goodreads.com/oauth/authorize?oauth_token=abcdefz
+  Have you authorized me? (y/n) y
+  Books read based on Goodreads reviews
+  en: 23
+  de: 17
+
+The access token and access token secrets will be stored in a
+``.access_token`` file so you won't have to reauthorise next time. If
+there's ever authentication issues or 401 errors, you might want to
+delete that file and reauthorise the app again.
 
 Versions
 --------
