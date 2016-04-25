@@ -35,7 +35,7 @@ class BookArranger():
     def print_sorted_books_nicely(self, books, details=False):
         print("Books read based on Goodreads reviews")
 
-        for lang in books.keys():
+        for lang in sorted(books.keys()):
             print("%s: %d" % (lang, len(books[lang])))
             if details:
                 for book in books[lang]:
