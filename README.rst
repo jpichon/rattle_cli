@@ -82,7 +82,7 @@ The first time you use the app, you'll have to authorise it:
 ::
 
   $ python rattle_cli.py --languages en de --year 2016
-  Visit this URL in your browser: http://www.goodreads.com/oauth/authorize?oauth_token=abcdefz
+  Visit this URL in your browser: https://www.goodreads.com/oauth/authorize?oauth_token=abcdefz
   Have you authorized me? (y/n)
 
 Open the URL in the browser. Once you've allowed the app, you can
@@ -93,7 +93,7 @@ displayed.
 ::
 
   $ python rattle_cli.py --languages en de --year 2016
-  Visit this URL in your browser: http://www.goodreads.com/oauth/authorize?oauth_token=abcdefz
+  Visit this URL in your browser: https://www.goodreads.com/oauth/authorize?oauth_token=abcdefz
   Have you authorized me? (y/n) y
   Books read based on Goodreads reviews
   en: 23
