@@ -16,7 +16,7 @@ year will be displayed. As an example:
 
 ::
 
-    $ python rattle-cli.py --lang en fr ja --year 2016
+    $ python rattle_cli.py --lang en fr ja --year 2016
     Books read based on Goodreads reviews
     en: 3
     fr: 1
@@ -26,7 +26,7 @@ You can also see the detailed version.
 
 ::
 
-    $ python rattle-cli.py --lang en fr ja --year 2016 --details
+    $ python rattle_cli.py --lang en fr ja --year 2016 --details
     Books read based on Goodreads reviews
     en: 3
     The Hero of Ages (Mistborn, #3), by Brandon Sanderson
@@ -47,7 +47,7 @@ fair to assume it's in English.
 
 ::
 
-    $ python rattle-cli.py --lang fr ja --other --year 2016
+    $ python rattle_cli.py --lang fr ja --other --year 2016
     Books read based on Goodreads reviews
     default: 3
     fr: 1
@@ -111,7 +111,7 @@ Tested with Python 3.3.
 
 ::
 
-    $ python rattle-cli.py --help
+    $ python rattle_cli.py --help
 
 Known issues
 ------------
