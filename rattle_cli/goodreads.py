@@ -96,6 +96,22 @@ class Goodreads():
             self.logger.exception("Failed to parse date for review %s (%s)",
                                   review['id'], title)
 
+        # We're only looking at the 'read' shelf so everything in here should
+        # have been read. If there is no date, it could be that the user didn't
+        # give the book a rating or review. Let's try to use the updated date
+        # instead.
+        if date_read == "":
+            try:
+                date_read = datetime.strptime(review['date_updated'],
+                                              self.date_format)
+                self.logger.info(
+                    "Using 'date updated' as backup for 'date read' for %s (%s)",
+                    title, date_read)
+            except ValueError:
+                self.logger.exception(
+                    "Failed to parse 'date_updated' date (%s) for review %s (%s)",
+                    review['date_updated'], review['id'], title)
+
         return date_read
 
     def parse_author(self, review):

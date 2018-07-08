@@ -19,7 +19,7 @@ class BookArranger():
 
         for book in self.books:
             if year is not None:
-                if book.date_read.year != year:
+                if not book.date_read or book.date_read.year != year:
                     continue
 
             for lang in languages:

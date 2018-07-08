@@ -70,7 +70,7 @@ class TestReviewParsing(unittest.TestCase):
     def setUp(self):
         session = mock.Mock()
         self.goodreads = Goodreads(session)
-        self.review = {'id': 1}
+        self.review = {'id': 1, 'date_updated': ''}
         self.title = "Test"
 
     def test_parse_date_read(self):
@@ -96,6 +96,16 @@ class TestReviewParsing(unittest.TestCase):
         result = self.goodreads.parse_date_read(self.review, self.title)
         self.assertIsInstance(result, str)
         self.assertEqual(result, "")
+
+    def test_parse_no_date_read_and_use_date_updated(self):
+        self.review['read_at'] = ""
+        self.review['date_updated'] = "Thu Feb 15 13:54:37 -0800 2018"
+
+        result = self.goodreads.parse_date_read(self.review, self.title)
+        self.assertIsInstance(result, datetime.datetime)
+        self.assertEqual(result.year, 2018)
+        self.assertEqual(result.month, 2)
+        self.assertEqual(result.day, 15)
 
     def test_parse_date_no_tag(self):
         result = self.goodreads.parse_date_read(self.review, self.title)

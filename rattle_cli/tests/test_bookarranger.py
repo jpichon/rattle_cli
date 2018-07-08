@@ -106,6 +106,17 @@ class TestBookArrangerLangSort(unittest.TestCase):
         self.assertCountEqual(books.keys(), ['it'])
         self.assertEqual(len(books['it']), self.langs['it'])
 
+    def test_sort_by_language_date_read_missing(self):
+        book = Book(title="Another book", author="An author",
+                    date_read="",
+                    shelves=['en'])
+        self.books += [book]
+        self.ba = BookArranger(self.books)
+
+        books = self.ba.sort_by_language(languages=['en'],
+                                         year=1990)
+        self.assertEqual(len(books['en']), 0)
+
 
 class TestBookArrangerLangYearSort(unittest.TestCase):
 
