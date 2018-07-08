@@ -107,7 +107,7 @@ delete that file and reauthorise the app again.
 Versions
 --------
 
-Tested with Python 3.3.
+Tested with Python 3.6.
 
 ::
 
