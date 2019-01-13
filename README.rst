@@ -53,6 +53,16 @@ fair to assume it's in English.
     fr: 1
     ja: 2
 
+or
+
+::
+
+    $ python rattle_cli.py --lang fr ja --other --other-label en --year 2016
+    Books read based on Goodreads reviews
+    en: 3
+    fr: 1
+    ja: 2
+
 
 Getting started
 ---------------
