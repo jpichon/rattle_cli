@@ -11,12 +11,12 @@ except:
 
 
 def retrieve_and_sort_books(languages=None, other=False, other_label='default',
-                            year=None, details=False):
+                            year=None, details=False, shelf='read'):
     session = GoodreadsSession(api_key, api_secret)
     goodreads = Goodreads(session)
     goodreads.initialise_user()
 
-    books = goodreads.get_books()
+    books = goodreads.get_books(shelf)
     arranger = BookArranger(books)
 
     sorted_books = arranger.sort_by_language(languages, other, other_label,
@@ -57,7 +57,7 @@ them in the final count regardless:
    sp: 4
 """)
 
-    parser.add_argument("--lang", "--languages",
+    parser.add_argument("--lang", "--languages", "--type", "--types",
                         help="Space-separated shelf name(s) matching the \
                         languages to compile stats on",
                         nargs="*")
@@ -76,13 +76,18 @@ them in the final count regardless:
     parser.add_argument("--details",
                         help="Also show the book details for each language",
                         action="store_true")
+    parser.add_argument("--shelf",
+                        help="One of your exclusive shelves. By default; \
+                        read, currently-reading, to-read",
+                        nargs="?", default="read")
     args = parser.parse_args()
 
     retrieve_and_sort_books(languages=args.lang,
                             other=args.other,
                             other_label=args.other_label,
                             year=args.year,
-                            details=args.details)
+                            details=args.details,
+                            shelf=args.shelf)
 
 
 if __name__ == "__main__":
