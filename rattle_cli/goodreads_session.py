@@ -33,7 +33,7 @@ class GoodreadsSession():
                 with open(self.filename, 'w') as f:
                     print(self.access_token, file=f)
                     print(self.access_token_secret, file=f)
-            except:
+            except Exception:
                 self.logger.exception("Couldn't save the token")
 
     def get_new_session(self):

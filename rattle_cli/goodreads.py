@@ -105,12 +105,14 @@ class Goodreads():
                 date_read = datetime.strptime(review['date_updated'],
                                               self.date_format)
                 self.logger.info(
-                    "Using 'date updated' as backup for 'date read' for %s (%s)",
-                    title, date_read)
+                    "Using 'date updated' as backup for 'date read' "
+                    "for %s (%s)", title, date_read
+                )
             except ValueError:
                 self.logger.exception(
-                    "Failed to parse 'date_updated' date (%s) for review %s (%s)",
-                    review['date_updated'], review['id'], title)
+                    "Failed to parse 'date_updated' date (%s) for review "
+                    "%s (%s)", review['date_updated'], review['id'], title
+                )
 
         return date_read
 

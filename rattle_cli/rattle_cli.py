@@ -6,7 +6,7 @@ from goodreads import Goodreads
 from goodreads_session import GoodreadsSession
 try:
     from secrets import api_key, api_secret
-except:
+except Exception:
     exit("No API key/secret found.")
 
 
