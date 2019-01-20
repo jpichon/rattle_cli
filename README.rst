@@ -117,7 +117,7 @@ delete that file and reauthorise the app again.
 Versions
 --------
 
-Tested with Python 3.6.
+Tested with Python 3.4 to 3.7.
 
 ::
 
@@ -145,3 +145,13 @@ for a number of reasons:
     and make sure to only get the updated stuff (new books, modified
     read dates) afterward instead. Maybe someday. There are other cool
     stats the data could be used for.
+
+Credits
+-------
+
+This package was actually _not_ created with Cookiecutter_ and the
+`audreyr/cookiecutter-pypackage`_ project template, but when I decided to start
+fixing some missing bits that's where I went to look for them :)
+
+.. _Cookiecutter: https://github.com/audreyr/cookiecutter
+.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
