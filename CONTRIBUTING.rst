@@ -71,6 +71,12 @@ Ready to contribute? Here's how to set up `rattle_cli` for local development.
     $ source .venv/bin/activate
     $ pip install -r requirements.txt -r test-requirements.txt
 
+   Make sure the virtualenv is set up with Python 3. If the default on your
+   system uses Python 2, you can explicity specify the path to your Python 3
+   binaries. For example::
+
+   $ virtualenv --no-site-packages --python /usr/bin/python3 .venv
+
 4. Create a branch for local development::
 
     $ git checkout -b name-of-your-bugfix-or-feature
