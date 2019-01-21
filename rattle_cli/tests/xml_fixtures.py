@@ -40,7 +40,7 @@ class GoodreadsXMLFactory():
 </author>"""
 
     shelf_tag = """
-    <shelf name="{shelf_name}" exclusive="false" review_shelf_id="1237" />"""
+    <shelf name="{shelf_name}" exclusive="{exclusive}" review_shelf_id="1237" />"""
 
     def create_full_xml_response(self, reviews=1, authors=1, d=None, shelves=1,
                                  start_cnt=1, end_cnt=None):
@@ -67,7 +67,7 @@ class GoodreadsXMLFactory():
         book = self.create_book("Wonderful Book Title %d" % num,
                                 authors)
         read_at = self.create_read_at_date(d)
-        shelves = self.create_shelves(shelves)
+        shelves = self.create_shelves_with_exclusive(shelves)
 
         review = self.review_tag.format_map({'book': book,
                                              'shelves': shelves,
@@ -101,7 +101,21 @@ class GoodreadsXMLFactory():
         name = "Self #%s"
 
         for n in range(0, num):
-            details = {'shelf_name': name % n}
+            details = {'shelf_name': name % n, 'exclusive' : 'false'}
             shelves += self.shelf_tag.format_map(details)
 
         return shelves
+
+    def create_shelves_with_exclusive(self, num=1):
+        shelves = ""
+        name = "Self #%s"
+
+        details = {'shelf_name': 'read', 'exclusive' : 'true'}
+        shelves += self.shelf_tag.format_map(details)
+
+        for n in range(1, num):
+            details = {'shelf_name': name % n, 'exclusive' : 'false'}
+            shelves += self.shelf_tag.format_map(details)
+
+        return shelves
+
