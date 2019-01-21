@@ -57,7 +57,7 @@ them in the final count regardless:
    sp: 4
 """)
 
-    parser.add_argument("--lang", "--languages", "--type", "--types",
+    parser.add_argument("--lang", "--languages",
                         help="Space-separated shelf name(s) matching the \
                         languages to compile stats on",
                         nargs="*")
@@ -77,8 +77,8 @@ them in the final count regardless:
                         help="Also show the book details for each language",
                         action="store_true")
     parser.add_argument("--shelf",
-                        help="One of your exclusive shelves. By default; \
-                        read, currently-reading, to-read",
+                        help="One of your exclusive shelves, by default one of; \
+                        read, currently-reading, to-read. Default value: read",
                         nargs="?", default="read")
     args = parser.parse_args()
 

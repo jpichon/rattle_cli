@@ -37,7 +37,7 @@ class Goodreads():
             self.logger.exception(msg, url, response.status_code)
             exit(msg % (url, response.status_code))
 
-    def retrieve_reviews(self, shelf, page=1):
+    def retrieve_reviews(self, shelf="read", page=1):
         data = {'id': self.user_id,
                 'v': '2',
                 'page': page,
@@ -50,7 +50,7 @@ class Goodreads():
                          url, page, response.status_code)
         return xmltodict.parse(response.content)[self.main_tag]['reviews']
 
-    def get_books(self, shelf):
+    def get_books(self, shelf="read"):
         page, end, total = 0, 0, 1
 
         while end < total:
