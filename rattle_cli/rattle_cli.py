@@ -76,7 +76,7 @@ them in the final count regardless:
     parser.add_argument("--details",
                         help="Also show the book details for each language",
                         action="store_true")
-    parser.add_argument("--shelf",
+    parser.add_argument("--status-shelf",
                         help="One of your exclusive shelves, by default one of; \
                         read, currently-reading, to-read. Default value: read",
                         nargs="?", default="read")
@@ -87,7 +87,7 @@ them in the final count regardless:
                             other_label=args.other_label,
                             year=args.year,
                             details=args.details,
-                            shelf=args.shelf)
+                            shelf=args.status_shelf)
 
 
 if __name__ == "__main__":
