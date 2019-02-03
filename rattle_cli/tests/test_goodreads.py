@@ -203,27 +203,6 @@ class TestReviewRetrieval(unittest.TestCase):
         self.assertIn('book', review.keys())
         self.assertIn('shelves', review.keys())
 
-    def test_retrieve_reviews_shelves(self):
-        response = mock.Mock()
-        response.content = self.xml_factory.create_full_xml_response(shelves=2)
-        self.goodreads.session.post.return_value = response
-
-        result = self.goodreads.retrieve_reviews("read")
-        self.assertIsInstance(result, OrderedDict)
-        self.assertIn('review', result.keys())
-
-        review = result['review']  # Only one review, so not a list
-        self.assertIn('book', review.keys())
-        self.assertIn('shelves', review.keys())
-        shelves = review['shelves']
-        self.assertIn('shelf', shelves.keys())
-        shelf = shelves['shelf']
-        self.assertIn('@name', shelf[0])
-        self.assertEqual('read', shelf[0]['@name'])
-        self.assertEqual('true', shelf[0]['@exclusive'])
-        self.assertEqual('Self #1', shelf[1]['@name'])
-        self.assertEqual('false', shelf[1]['@exclusive'])
-
     def test_retrieve_reviews_multiple_reviews(self):
         review_count = 10
         xml = self.xml_factory.create_full_xml_response(reviews=review_count)
