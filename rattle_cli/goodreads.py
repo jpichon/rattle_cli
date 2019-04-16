@@ -37,11 +37,11 @@ class Goodreads():
             self.logger.exception(msg, url, response.status_code)
             exit(msg % (url, response.status_code))
 
-    def retrieve_reviews(self, page=1):
+    def retrieve_reviews(self, shelf="read", page=1):
         data = {'id': self.user_id,
                 'v': '2',
                 'page': page,
-                'shelf': 'read',
+                'shelf': shelf,
                 'sort': 'date_read'}
 
         url = 'https://www.goodreads.com/review/list/%s.xml' % self.user_id
@@ -50,12 +50,12 @@ class Goodreads():
                          url, page, response.status_code)
         return xmltodict.parse(response.content)[self.main_tag]['reviews']
 
-    def get_books(self):
+    def get_books(self, shelf="read"):
         page, end, total = 0, 0, 1
 
         while end < total:
             page += 1
-            reviews = self.retrieve_reviews(page)
+            reviews = self.retrieve_reviews(shelf, page)
             end = int(reviews['@end'])
             total = int(reviews['@total'])
             self.logger.debug("Parsing page %s (until review #%s, total %s)",
@@ -83,6 +83,7 @@ class Goodreads():
         try:
             date_read = datetime.strptime(review['read_at'],
                                           self.date_format)
+
         except KeyError:
             date_read = ""
             self.logger.info("Date read is missing (review %s for %s)",
